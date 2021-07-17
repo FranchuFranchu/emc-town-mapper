@@ -2,6 +2,10 @@ import json
 import re
 import os
 import sys
+from pathlib import Path
+
+
+PARENT = Path(__file__).parent
 
 ### SETTINGS BEGIN ###
 
@@ -57,27 +61,15 @@ colors = {
 	"": "#FFFFFF",	
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ### SETTINGS END ###
+
+# TODO use platform-independent Python modules to update the marker_earth frile
 
 #os.system('rm marker_earth.json')
 #os.system('wget https://earthmc.net/map/tiles/_markers_/marker_earth.json')
 
 	
-with open('marker_earth.json') as f:
+with open(PARENT / 'marker_earth.json') as f:
 	d = json.load(f)["sets"]["townyPlugin.markerset"]["areas"]
 
 
@@ -89,8 +81,8 @@ import time
 pygame.init()
 pygame.mixer.quit()
 
-starimg = pygame.image.load("star.png")
-cityimg = pygame.image.load("city.png")
+starimg = pygame.image.load(PARENT / "star.png")
+cityimg = pygame.image.load(PARENT / "city.png")
 cityrect = cityimg.get_rect()
 
 '''
@@ -145,12 +137,16 @@ for k, v in d.items():
 		cityimg = surfs[""]
 	else:
 		continue
+		
+	# Transform to image coordinates
 	cityrect.x = (int(avg[0]) - TOPLEFT[0]) * (IMAGE_SIZE[0] / MC_SIZE[0])
 	cityrect.y = (int(avg[1]) - TOPLEFT[1]) * (IMAGE_SIZE[1] / MC_SIZE[1])
+	
 	if cityrect.x < 0 or cityrect.y < 0:
+		# it's outside of the image
 		continue
 	screen.blit(cityimg, cityrect)
 
-pygame.image.save(screen, "out.png")
+pygame.image.save(screen, "./out.png")
 
 		
